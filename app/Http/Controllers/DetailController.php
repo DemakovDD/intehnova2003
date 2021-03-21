@@ -2,83 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DetailController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $users = session('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d');
+        return view('shop.index', compact('users'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        return view('shop.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'detail' => 'required',
+            'maker' => 'required',
+            'shop' => 'required',
+        ]);
+
+        $data = Product::create([
+            'detail' => $request->detail,
+            'maker' => $request->maker,
+            'shop' => $request->shop,
+        ]);
+
+        return redirect()->route('detail.index')->with('success', 'Статья добавлена');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+        $user = User::where('id', $id)->firstOrFail();
+        $products = $user->products()->orderBy('id','asc')->paginate(20);
+        $orders = Order::all();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return view('shop.show', compact('user', 'products', 'orders'));
     }
 }

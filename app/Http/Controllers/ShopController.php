@@ -9,12 +9,4 @@ class ShopController extends Controller
     public function index() {
         return view('index');
     }
-
-    public function client() {
-        return view('client.index');
-    }
-
-    public function store() {
-        return view('shop.index');
-    }
 }

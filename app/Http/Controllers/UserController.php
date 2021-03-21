@@ -23,14 +23,14 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'is_shop' => $request->is_shop,
+            'is_shop' => $request->is_shop ? $request->is_shop : 0,
         ]);
         session()->flash('success', 'Регистрация пройдена');
         Auth::login($user);
         if(Auth::user()->is_shop) {
-            return redirect()->route('shop');
+            return redirect()->route('detail.index');
         }else{
-            return redirect()->route('client');
+            return redirect()->route('client.index');
         }
     }
 
@@ -52,12 +52,12 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => $request->password,
         ])) {
-            session()->flash('success', 'Успешный вход');
+            session()->flash('success','Успешный вход');
 
             if(Auth::user()->is_shop) {
-                return redirect()->route('shop');
+                return redirect()->route('detail.index');
             }else{
-                return redirect()->route('client');
+                return redirect()->route('client.index');
             }
         }
         return redirect()->back()->with('error', 'Неправильные данные для входа');
